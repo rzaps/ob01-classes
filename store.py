@@ -21,23 +21,32 @@
 # # Выбери один из созданных магазинов и протестируй все его методы: добавь
 # товар, обнови цену,  убери товар и запрашивай цену.
 
-class Store:
+class Store():
 
-    def __init__(self, name, address, items=None):
+    def __init__(self, name, address):
         self.name = name
         self.address = address
         self.items = {}
 
     def add_item(self, item_name, price):
         self.items [item_name] = price
+        print(f"Товар {item_name} добавлен в {self.name}")  #les
 
     def delete_item(self, item_name):
-        self.items.pop(item_name)
+        if item_name in self.items:
+            del self.items[item_name]
+            print(f"Товар {item_name} удален из {self.name}")  # les
 
     def price(self, item_name):
         price = self.items.get(item_name)
         print(f"Цена товара {item_name}: {price}")
 
+    def update_price(self, item_name, new_price):
+        if item_name in self.items:
+            self.items[item_name] = new_price
+            print(f"Цена товара {item_name} изменена в {self.name}")
+        else:
+            print(f"Товар {item_name} не найден в {self.name}")
 
 
 store1 = Store("Морской", "ул. Морская, 9")
@@ -58,18 +67,21 @@ print(store1.items)
 
 store1.price("banana")
 
-store1.add_item("water", 28)
+store1.update_price("water", "90")
 
 store1.price("water")
 
-store2.add_item("apples", 0.7)
-store2.add_item("orange", 1.2)
-store2.add_item("banana", 2.8)
-store2.add_item("egg", 3.2)
-store2.add_item("water", 0.8)
 
-store3.add_item("apples", 0.7)
-store3.add_item("orange", 1.2)
-store3.add_item("banana", 2.8)
-store3.add_item("egg", 3.2)
-store3.add_item("water", 0.8)
+
+
+# store2.add_item("apples", 0.7)
+# store2.add_item("orange", 1.2)
+# store2.add_item("banana", 2.8)
+# store2.add_item("egg", 3.2)
+# store2.add_item("water", 0.8)
+#
+# store3.add_item("apples", 0.7)
+# store3.add_item("orange", 1.2)
+# store3.add_item("banana", 2.8)
+# store3.add_item("egg", 3.2)
+# store3.add_item("water", 0.8)

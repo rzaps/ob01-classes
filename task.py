@@ -13,7 +13,6 @@ class Task():
         self.deadline = deadline
         self.status = status
 
-
     #добавление задачи
     def add_task(self):
         Task.all_tasks.append(self)
@@ -22,6 +21,7 @@ class Task():
     #вывод задачи в списке
     def list(self):
         print(f"Задача: {self.description} --- Срок: {self.deadline}")
+
 
     #изменение статуса задачи
     def ready(self):
@@ -53,3 +53,4 @@ task2.ready()
 for task in Task.all_tasks:
     if task.status == "не выполнена":
        task.list()
+
