@@ -19,10 +19,10 @@
 class User():
     user_list = []
 
-    def __init__(self, ID, name, access_level="user"):
+    def __init__(self, ID, name):
         self.__ID = ID
         self._name = name
-        self.__access_level = access_level
+        self.__access_level = "user"
 
     def get_ID(self):
         return self.__ID
@@ -33,10 +33,16 @@ class User():
     def get_access_level(self):
         return self.__access_level
 
+    def set_name(self, name):
+        self._name = name
+
+
 class Admin(User):
 
     def __init__(self, ID, name, access_level="admin"):
-        super().__init__(ID, name, access_level)
+        super().__init__(ID, name)
+        self.__access_level = "admin"
+
 
     def add_user(self, user):
         User.user_list.append(user)
