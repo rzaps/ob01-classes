@@ -61,11 +61,11 @@ class Employee:
 
 class ZooKeeper(Employee):
     def feed_animal(self, animal):
-        print(f"кормит {animal.name}")
+        print("кормит животных")
 
 class Veterinarian(Employee):
     def heal_animal(self, animal):
-        print(f"лечит {animal.name}")
+        print("лечит животных")
 
 
 def animal_sound(animals):
