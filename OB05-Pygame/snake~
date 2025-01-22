@@ -1,0 +1,168 @@
+import pygame
+import random
+
+# Инициализация Pygame
+pygame.init()
+
+# Размеры окна
+WIDTH = 600
+HEIGHT = 400
+
+# Цвета
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+
+# Размер блока змейки и еды
+BLOCK_SIZE = 20
+
+# Создание окна
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Змейка")
+
+# Часы
+clock = pygame.time.Clock()
+
+# Шрифт для отображения счета
+font = pygame.font.SysFont("comicsans", 30)
+
+# Класс для змейки
+class Snake:
+    def __init__(self):
+        self.body = [[100, 50], [90, 50], [80, 50]]  # Начальное тело змейки
+        self.direction = "RIGHT"  # Направление движения
+        self.grow = False  # Флаг для увеличения длины змейки
+
+    def move(self):
+        # Получаем координаты головы змейки
+        head = self.body[0].copy()
+
+        # Изменяем координаты головы в зависимости от направления
+        if self.direction == "RIGHT":
+            head[0] += BLOCK_SIZE
+        elif self.direction == "LEFT":
+            head[0] -= BLOCK_SIZE
+        elif self.direction == "UP":
+            head[1] -= BLOCK_SIZE
+        elif self.direction == "DOWN":
+            head[1] += BLOCK_SIZE
+
+        # Добавляем новую голову змейки
+        self.body.insert(0, head)
+
+        # Если змейка не растет, удаляем хвост
+        if not self.grow:
+            self.body.pop()
+        else:
+            self.grow = False  # Сбрасываем флаг роста
+
+    def draw(self):
+        for block in self.body:
+            pygame.draw.rect(screen, GREEN, (block[0], block[1], BLOCK_SIZE, BLOCK_SIZE))
+
+    def check_collision(self):
+        # Проверка столкновения с границами экрана
+        if (
+            self.body[0][0] >= WIDTH
+            or self.body[0][0] < 0
+            or self.body[0][1] >= HEIGHT
+            or self.body[0][1] < 0
+        ):
+            return True
+
+        # Проверка столкновения с собой
+        for block in self.body[1:]:
+            if self.body[0] == block:
+                return True
+
+        return False
+
+    def eat(self, food):
+        # Проверка, съела ли змейка еду
+        if self.body[0] == food.position:
+            self.grow = True  # Устанавливаем флаг роста
+            return True
+        return False
+
+
+# Класс для еды
+class Food:
+    def __init__(self):
+        self.position = [0, 0]
+        self.spawn()
+
+    def spawn(self):
+        # Генерация случайной позиции для еды
+        self.position = [
+            random.randint(0, (WIDTH - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE,
+            random.randint(0, (HEIGHT - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE,
+        ]
+
+        # Проверка, чтобы еда не появилась внутри змейки
+        while self.position in snake.body:
+            self.position = [
+                random.randint(0, (WIDTH - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE,
+                random.randint(0, (HEIGHT - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE,
+            ]
+
+    def draw(self):
+        pygame.draw.rect(screen, RED, (self.position[0], self.position[1], BLOCK_SIZE, BLOCK_SIZE))
+
+
+# Основная функция игры
+def game_loop():
+    global snake  # Делаем змейку глобальной для доступа из класса Food
+    snake = Snake()
+    food = Food()
+    score = 0
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            # Управление змейкой
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT and snake.direction != "LEFT":
+                    snake.direction = "RIGHT"
+                if event.key == pygame.K_LEFT and snake.direction != "RIGHT":
+                    snake.direction = "LEFT"
+                if event.key == pygame.K_UP and snake.direction != "DOWN":
+                    snake.direction = "UP"
+                if event.key == pygame.K_DOWN and snake.direction != "UP":
+                    snake.direction = "DOWN"
+
+        # Движение змейки
+        snake.move()
+
+        # Проверка столкновений
+        if snake.check_collision():
+            running = False
+
+        # Проверка, съела ли змейка еду
+        if snake.eat(food):
+            food.spawn()
+            score += 1
+
+        # Отрисовка
+        screen.fill(BLACK)
+        snake.draw()
+        food.draw()
+
+        # Отображение счета
+        score_text = font.render(f"Score: {score}", True, WHITE)
+        screen.blit(score_text, (10, 10))
+
+        pygame.display.update()
+        clock.tick(15)  # Скорость обновления экрана (FPS)
+
+    # Завершение игры
+    pygame.quit()
+
+
+# Запуск игры
+if __name__ == "__main__":
+    game_loop()
